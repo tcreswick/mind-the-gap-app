@@ -1,0 +1,24 @@
+[Unit]
+Description=__APP_NAME__ (Spring Boot)
+After=network.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+Group=__APP_GROUP__
+WorkingDirectory=/opt/__APP_NAME__/current
+EnvironmentFile=-/etc/default/__APP_NAME__
+ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/__APP_NAME__/current/app.jar --spring.config.additional-location=file:/etc/__APP_NAME__/
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+
+# Minimal hardening baseline.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/__APP_NAME__ /tmp
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,25 @@
+server:
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: uk-companies-gender-diversity-stats
+  thymeleaf:
+    cache: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+app:
+  download-page-url: https://gender-pay-gap.service.gov.uk/viewing/download-data/
+  source-start-year: 2017
+  refresh-interval-ms: 10800000
+  data-directory: data
+  snapshot-file-name: store.json.gz
+  startup-refresh-enabled: true

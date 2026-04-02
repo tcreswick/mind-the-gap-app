@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_NAME="__APP_NAME__"
+APP_USER="__APP_USER__"
+APP_GROUP="__APP_GROUP__"
+REPO_URL="__REPO_URL__"
+BRANCH="__BRANCH__"
+SRC_DIR="__SRC_DIR__"
+APP_BASE="__APP_BASE__"
+RELEASES_DIR="__RELEASES_DIR__"
+CURRENT_LINK="__CURRENT_LINK__"
+
+TIMESTAMP="$(date +%Y%m%d%H%M%S)"
+RELEASE_DIR="${RELEASES_DIR}/${TIMESTAMP}"
+
+echo "==> Preparing directories"
+mkdir -p "${SRC_DIR}" "${RELEASES_DIR}"
+chown -R "${APP_USER}:${APP_GROUP}" "${SRC_DIR}" "${APP_BASE}"
+
+if [[ ! -d "${SRC_DIR}/.git" ]]; then
+  echo "==> Cloning repository"
+  sudo -u "${APP_USER}" git clone --branch "${BRANCH}" "${REPO_URL}" "${SRC_DIR}"
+else
+  echo "==> Pulling latest changes"
+  sudo -u "${APP_USER}" git -C "${SRC_DIR}" fetch origin
+  sudo -u "${APP_USER}" git -C "${SRC_DIR}" checkout "${BRANCH}"
+  sudo -u "${APP_USER}" git -C "${SRC_DIR}" reset --hard "origin/${BRANCH}"
+fi
+
+echo "==> Building application"
+sudo -u "${APP_USER}" bash -lc "cd '${SRC_DIR}' && chmod +x mvnw && ./mvnw -DskipTests clean package"
+
+echo "==> Locating runnable jar"
+JAR_PATH="$(sudo -u "${APP_USER}" bash -lc "cd '${SRC_DIR}/target' && ls -1 *.jar 2>/dev/null | grep -Ev '(sources|javadoc|original)' | head -n 1")"
+if [[ -z "${JAR_PATH}" ]]; then
+  echo "ERROR: could not find runnable jar in ${SRC_DIR}/target"
+  exit 1
+fi
+
+echo "==> Publishing release ${TIMESTAMP}"
+mkdir -p "${RELEASE_DIR}"
+cp "${SRC_DIR}/target/${JAR_PATH}" "${RELEASE_DIR}/app.jar"
+chown -R "${APP_USER}:${APP_GROUP}" "${RELEASE_DIR}"
+ln -sfn "${RELEASE_DIR}" "${CURRENT_LINK}"
+chown -h "${APP_USER}:${APP_GROUP}" "${CURRENT_LINK}"
+
+echo "==> Restarting service"
+systemctl restart "${APP_NAME}.service"
+systemctl --no-pager status "${APP_NAME}.service"
+
+echo "==> Deployment complete"
+echo "Active jar: ${CURRENT_LINK}/app.jar"
