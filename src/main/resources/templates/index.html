@@ -106,7 +106,7 @@
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(topViewedCompaniesLast30Days)}">
                 <h2>Most viewed in the last 30 days</h2>
                 <p class="chart-description">Companies with the highest page views over the last 30 days.</p>
-                <div class="recent-updates-table-wrap">
+                <div class="recent-updates-table-wrap most-viewed-table-wrap">
                     <table class="recent-updates-table">
                         <thead>
                             <tr>
@@ -254,11 +254,11 @@
                 </p>
                 <div class="quartile-legend" aria-hidden="true">
                     <div class="quartile-legend-item">
-                        <span class="quartile-legend-swatch" style="background:#2563eb"></span>
+                        <span class="quartile-legend-swatch" style="background:#1e293b"></span>
                         Men
                     </div>
                     <div class="quartile-legend-item">
-                        <span class="quartile-legend-swatch" style="background:#e11d48"></span>
+                        <span class="quartile-legend-swatch" style="background:#6366f1"></span>
                         Women
                     </div>
                 </div>

@@ -311,6 +311,11 @@ main.main-content {
   border-radius: 0.5rem;
 }
 
+.most-viewed-table-wrap {
+  max-height: none;
+  overflow-y: visible;
+}
+
 .recent-updates-table {
   width: 100%;
   border-collapse: collapse;
