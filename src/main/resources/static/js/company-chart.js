@@ -117,6 +117,22 @@
     }
   }
 
+  // ── 1b. Workforce composition stacked bars ─────────────
+  const elSplitBars = document.getElementById("chart-split-bars");
+  if (elSplitBars) {
+    const hasData = p.male.some(v => v !== null);
+    if (hasData) {
+      new ApexCharts(elSplitBars, stackedBarOptions({
+        series: [
+          { name: "Men (%)",   data: p.male   },
+          { name: "Women (%)", data: p.female },
+        ],
+        height: 220,
+        showLegend: true,
+      })).render();
+    }
+  }
+
   // ── 2. Hourly pay gap line chart ───────────────────────
   const elPayGap = document.getElementById("chart-pay-gap");
   if (elPayGap) {
