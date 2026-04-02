@@ -106,17 +106,26 @@
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(topViewedCompaniesLast30Days)}">
                 <h2>Most viewed in the last 30 days</h2>
                 <p class="chart-description">Companies with the highest page views over the last 30 days.</p>
-                <ol class="recent-updates-list">
-                    <li class="recent-updates-item" th:each="v : ${topViewedCompaniesLast30Days}">
-                        <a class="recent-updates-company"
-                           th:href="@{/company/{employerId}(employerId=${v.employerId})}"
-                           th:text="${v.displayName}"></a>
-                        <span class="recent-updates-meta">
-                            <span th:text="${v.viewCountLast30Days}"></span>
-                            <span th:text="${v.viewCountLast30Days == 1 ? ' view' : ' views'}"></span>
-                        </span>
-                    </li>
-                </ol>
+                <div class="recent-updates-table-wrap">
+                    <table class="recent-updates-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Company</th>
+                                <th scope="col">Views (30 days)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="v : ${topViewedCompaniesLast30Days}">
+                                <td>
+                                    <a class="recent-updates-company"
+                                       th:href="@{/company/{employerId}(employerId=${v.employerId})}"
+                                       th:text="${v.displayName}"></a>
+                                </td>
+                                <td th:text="${#numbers.formatInteger(v.viewCountLast30Days, 1, 'COMMA')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(recentUpdates)}">
