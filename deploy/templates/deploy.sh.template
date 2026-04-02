@@ -10,13 +10,15 @@ SRC_DIR="__SRC_DIR__"
 APP_BASE="__APP_BASE__"
 RELEASES_DIR="__RELEASES_DIR__"
 CURRENT_LINK="__CURRENT_LINK__"
+STATE_DIR="__STATE_DIR__"
+MAVEN_REPO_DIR="${STATE_DIR}/.m2/repository"
 
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 RELEASE_DIR="${RELEASES_DIR}/${TIMESTAMP}"
 
 echo "==> Preparing directories"
-mkdir -p "${SRC_DIR}" "${RELEASES_DIR}"
-chown -R "${APP_USER}:${APP_GROUP}" "${SRC_DIR}" "${APP_BASE}"
+mkdir -p "${SRC_DIR}" "${RELEASES_DIR}" "${MAVEN_REPO_DIR}"
+chown -R "${APP_USER}:${APP_GROUP}" "${SRC_DIR}" "${APP_BASE}" "${STATE_DIR}"
 
 if [[ ! -d "${SRC_DIR}/.git" ]]; then
   echo "==> Cloning repository"
@@ -29,7 +31,8 @@ else
 fi
 
 echo "==> Building application"
-sudo -u "${APP_USER}" bash -lc "cd '${SRC_DIR}' && chmod +x mvnw && ./mvnw -DskipTests clean package"
+sudo -u "${APP_USER}" HOME="${STATE_DIR}" MAVEN_USER_HOME="${STATE_DIR}/.m2" \
+  bash -lc "cd '${SRC_DIR}' && chmod +x mvnw && ./mvnw -Dmaven.repo.local='${MAVEN_REPO_DIR}' -DskipTests clean package"
 
 echo "==> Locating runnable jar"
 JAR_PATH="$(sudo -u "${APP_USER}" bash -lc "cd '${SRC_DIR}/target' && ls -1 *.jar 2>/dev/null | grep -Ev '(sources|javadoc|original)' | head -n 1")"

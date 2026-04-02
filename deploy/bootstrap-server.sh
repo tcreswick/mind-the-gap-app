@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_NAME="mind-the-gap"
+APP_NAME="mind-the-gap-app"
 REPO_URL="https://github.com/tcreswick/mind-the-gap-app.git"
 BRANCH="main"
 SRC_DIR=""

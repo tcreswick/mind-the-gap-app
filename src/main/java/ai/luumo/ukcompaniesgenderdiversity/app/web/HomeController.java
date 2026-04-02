@@ -47,6 +47,7 @@ public class HomeController {
             model.addAttribute("company", history);
             model.addAttribute("chartPayload", buildChartPayload(summaries));
             model.addAttribute("latestSummary", summaries.get(summaries.size() - 1));
+            model.addAttribute("yearlySummariesDesc", summaries.reversed());
             model.addAttribute("companySummary", buildSummary(history.displayName(), summaries));
             model.addAttribute("hasLateSubmissions",
                     summaries.stream().anyMatch(CompanyYearSummary::submittedAfterDeadline));

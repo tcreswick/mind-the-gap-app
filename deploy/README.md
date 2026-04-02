@@ -45,6 +45,12 @@ After bootstrap, deploy updates with:
 sudo /usr/local/bin/deploy-mind-the-gap-app.sh
 ```
 
+If deploy script templates changed in this repo, re-run install once so `/usr/local/bin/deploy-<app>.sh` is regenerated:
+
+```bash
+sudo bash deploy/install-server.sh --repo-url https://github.com/tcreswick/mind-the-gap-app.git --branch main --app-name mind-the-gap-app --src-dir /srv/mind-the-gap-app
+```
+
 ## Service operations
 
 ```bash
@@ -77,3 +83,4 @@ sudo systemctl reload nginx
 
 - This project currently targets Java 25 (`pom.xml`), so your Debian server must have a Java 25 JDK available for build/runtime.
 - If your Git host uses SSH, ensure the server user can access the repo key (or use an HTTPS URL with token auth).
+- Maven local repo is stored under `/var/lib/<app>/.m2/repository` to avoid `/nonexistent/.m2` errors when using a no-login system user.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_NAME="mind-the-gap"
+APP_NAME="mind-the-gap-app"
 APP_USER="springapp"
 APP_GROUP="springapp"
 REPO_URL="https://github.com/tcreswick/mind-the-gap-app.git"
@@ -107,6 +107,7 @@ sed \
   -e "s|__APP_BASE__|${APP_BASE}|g" \
   -e "s|__RELEASES_DIR__|${RELEASES_DIR}|g" \
   -e "s|__CURRENT_LINK__|${CURRENT_LINK}|g" \
+  -e "s|__STATE_DIR__|${STATE_DIR}|g" \
   "${TEMPLATES_DIR}/deploy.sh.template" > "${DEPLOY_SCRIPT_PATH}"
 chmod 0755 "${DEPLOY_SCRIPT_PATH}"
 

@@ -10,7 +10,7 @@
     <script defer src="/js/company-chart.js"></script>
 </head>
 <body>
-<header class="hero">
+<header class="hero" th:classappend="${viewingCompany ? ' hero--compact' : ''}">
     <div class="container">
         <a href="/" class="hero-title-link">
             <h1>Mind the Gap</h1>
@@ -72,11 +72,8 @@
                 (typically 250+ employees) to publish annual pay and bonus gap figures plus pay quartile splits.
                 Deadlines are generally April (private/voluntary sector) and March (public sector).
             </p>
-            <p th:if="${lastUpdatedAt != null}">
-                <span class="update-stamp">
-                    Last updated:
-                    <strong th:text="${#temporals.format(lastUpdatedAt, 'yyyy-MM-dd HH:mm z')}"></strong>
-                </span>
+            <p th:if="${lastUpdatedAt != null}" class="update-stamp">
+                Last updated <strong th:text="${#temporals.format(lastUpdatedAt, 'd MMMM yyyy')}"></strong>.
             </p>
         </div>
     </section>
@@ -197,6 +194,16 @@
             Each band shows what percentage of that quartile is male (dark) vs female (indigo).
             A glass-ceiling effect appears when the lower quartile has more women than the top.
         </p>
+        <div class="quartile-legend" aria-hidden="true">
+            <div class="quartile-legend-item">
+                <span class="quartile-legend-swatch" style="background:#1e293b"></span>
+                Men
+            </div>
+            <div class="quartile-legend-item">
+                <span class="quartile-legend-swatch" style="background:#6366f1"></span>
+                Women
+            </div>
+        </div>
         <div class="quartile-grid">
             <div class="quartile-chart-wrap">
                 <p class="quartile-label">Lower quartile <span class="quartile-sub">bottom 25% of earners</span></p>
@@ -234,6 +241,98 @@
         </div>
     </section>
 
+    <!-- ── Year by year ──────────────────────────────────── -->
+    <section class="card" th:if="${company != null}">
+        <h2>Year by year</h2>
+        <p class="chart-description">Each year's submission in full. Most recent year shown first.</p>
+        <div class="year-reports">
+            <details class="year-report"
+                     th:each="s, iter : ${yearlySummariesDesc}"
+                     th:attr="open=${iter.index == 0 ? 'open' : null}">
+                <summary class="year-report-summary">
+                    <span class="year-report-summary-left">
+                        <span class="year-report-year" th:text="${s.reportingYear}"></span>
+                        <span class="year-report-hint"
+                              th:if="${s.diffMeanHourlyPercent != null}"
+                              th:text="${'Mean pay gap ' + #numbers.formatDecimal(s.diffMeanHourlyPercent, 1, 1) + '%'}"></span>
+                    </span>
+                    <span class="year-report-summary-right">
+                        <span class="late-badge" th:if="${s.submittedAfterDeadline}">Late submission</span>
+                        <svg class="year-report-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+                        </svg>
+                    </span>
+                </summary>
+                <div class="year-report-body">
+
+                    <!-- Pay gap and bonus stats -->
+                    <div class="year-stat-grid">
+                        <div class="year-stat" th:if="${s.diffMeanHourlyPercent != null}">
+                            <span class="year-stat-label">Mean hourly pay gap</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.diffMeanHourlyPercent, 1, 1) + '%'}"></span>
+                        </div>
+                        <div class="year-stat" th:if="${s.diffMedianHourlyPercent != null}">
+                            <span class="year-stat-label">Median hourly pay gap</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.diffMedianHourlyPercent, 1, 1) + '%'}"></span>
+                        </div>
+                        <div class="year-stat" th:if="${s.maleBonusPercent != null}">
+                            <span class="year-stat-label">Men receiving bonus</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.maleBonusPercent, 1, 1) + '%'}"></span>
+                        </div>
+                        <div class="year-stat" th:if="${s.femaleBonusPercent != null}">
+                            <span class="year-stat-label">Women receiving bonus</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.femaleBonusPercent, 1, 1) + '%'}"></span>
+                        </div>
+                        <div class="year-stat" th:if="${s.diffMeanBonusPercent != null}">
+                            <span class="year-stat-label">Mean bonus gap</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.diffMeanBonusPercent, 1, 1) + '%'}"></span>
+                        </div>
+                        <div class="year-stat" th:if="${s.diffMedianBonusPercent != null}">
+                            <span class="year-stat-label">Median bonus gap</span>
+                            <span class="year-stat-value" th:text="${#numbers.formatDecimal(s.diffMedianBonusPercent, 1, 1) + '%'}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Quartile breakdown visual bars -->
+                    <div th:if="${s.femaleLowerQuartile != null}">
+                        <p class="year-quartile-section-title">Women in each pay band</p>
+                        <div class="year-quartile-rows">
+                            <div class="year-quartile-row">
+                                <span class="year-quartile-name">Lower (bottom 25%)</span>
+                                <div class="year-quartile-bar">
+                                    <div class="year-quartile-fill" th:style="${'width: ' + s.femaleLowerQuartile + '%'}"></div>
+                                </div>
+                                <span class="year-quartile-pct" th:text="${#numbers.formatDecimal(s.femaleLowerQuartile, 1, 1) + '%'}"></span>
+                            </div>
+                            <div class="year-quartile-row" th:if="${s.femaleLowerMiddleQuartile != null}">
+                                <span class="year-quartile-name">Lower-middle</span>
+                                <div class="year-quartile-bar">
+                                    <div class="year-quartile-fill" th:style="${'width: ' + s.femaleLowerMiddleQuartile + '%'}"></div>
+                                </div>
+                                <span class="year-quartile-pct" th:text="${#numbers.formatDecimal(s.femaleLowerMiddleQuartile, 1, 1) + '%'}"></span>
+                            </div>
+                            <div class="year-quartile-row" th:if="${s.femaleUpperMiddleQuartile != null}">
+                                <span class="year-quartile-name">Upper-middle</span>
+                                <div class="year-quartile-bar">
+                                    <div class="year-quartile-fill" th:style="${'width: ' + s.femaleUpperMiddleQuartile + '%'}"></div>
+                                </div>
+                                <span class="year-quartile-pct" th:text="${#numbers.formatDecimal(s.femaleUpperMiddleQuartile, 1, 1) + '%'}"></span>
+                            </div>
+                            <div class="year-quartile-row" th:if="${s.femaleTopQuartile != null}">
+                                <span class="year-quartile-name">Top (25% highest earners)</span>
+                                <div class="year-quartile-bar">
+                                    <div class="year-quartile-fill" th:style="${'width: ' + s.femaleTopQuartile + '%'}"></div>
+                                </div>
+                                <span class="year-quartile-pct" th:text="${#numbers.formatDecimal(s.femaleTopQuartile, 1, 1) + '%'}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </details>
+        </div>
+    </section>
+
 </main>
 
 <footer class="site-footer">
@@ -242,7 +341,7 @@
             Mind the Gap &mdash; a <a href="https://luumo.ai" target="_blank" rel="noopener noreferrer">Luumo Factory</a> product.
         </p>
         <p class="footer-meta">
-            Data sourced from the <a href="https://gender-pay-gap.service.gov.uk/" target="_blank" rel="noopener noreferrer">UK Government Gender Pay Gap Service</a>.
+            Data sourced from the <a href="https://gender-pay-gap.service.gov.uk/" target="_blank" rel="noopener noreferrer" class="footer-link-muted">UK Government Gender Pay Gap Service</a>.
             &copy; 2026 Luumo Factory Limited.
         </p>
     </div>
