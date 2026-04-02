@@ -837,41 +837,44 @@ details.year-report[open] .year-report-chevron {
 .year-quartile-bar {
   flex: 1;
   height: 14px;
-  border-radius: 7px;
-  background: #f1f5f9;
-  overflow: hidden;
-  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.year-quartile-fill-women {
-  position: absolute;
-  right: 50%;
-  top: 0;
+.year-quartile-half {
+  flex: 1;
   height: 100%;
-  background: #6366f1;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.year-quartile-half--left {
+  display: flex;
+  justify-content: flex-end;
   border-radius: 7px 0 0 7px;
 }
 
-.year-quartile-fill-men {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  height: 100%;
-  background: #1e293b;
+.year-quartile-half--right {
   border-radius: 0 7px 7px 0;
 }
 
+.year-quartile-fill-women {
+  height: 100%;
+  background: #6366f1;
+}
+
+.year-quartile-fill-men {
+  height: 100%;
+  background: #1e293b;
+}
+
 .year-quartile-center-mark {
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  bottom: -3px;
   width: 2px;
+  height: 20px;
   background: var(--text);
-  transform: translateX(-50%);
   opacity: 0.35;
+  flex-shrink: 0;
   border-radius: 1px;
-  z-index: 1;
 }
 
 .year-quartile-pct {
