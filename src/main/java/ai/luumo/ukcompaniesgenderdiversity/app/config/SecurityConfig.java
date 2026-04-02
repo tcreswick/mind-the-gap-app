@@ -16,6 +16,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/", "/company/**", "/api/companies").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/robots.txt", "/llms.txt").permitAll()
                         .requestMatchers(HttpMethod.GET, HomeController.HIDDEN_VIEW_STATS_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/track/company-view").permitAll()
                         .requestMatchers(HttpMethod.GET, "/css/**", "/js/**").permitAll()
