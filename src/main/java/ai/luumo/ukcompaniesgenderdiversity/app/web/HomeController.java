@@ -12,8 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -57,13 +62,32 @@ public class HomeController {
         return "index";
     }
 
+    private static final DateTimeFormatter UPDATED_FMT =
+            DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy 'at' HH:mm 'UTC'", Locale.UK)
+                    .withZone(ZoneOffset.UTC);
+
     private void populateBaseModel(Model model) {
         StoreMetadata metadata = store.snapshot().metadata();
-        model.addAttribute("lastUpdatedAt", metadata.lastUpdatedAt());
+        Instant lastUpdated = metadata.lastUpdatedAt();
+        model.addAttribute("lastUpdatedAt", lastUpdated);
+        if (lastUpdated != null) {
+            model.addAttribute("lastUpdatedFormatted", UPDATED_FMT.format(lastUpdated));
+            model.addAttribute("lastUpdatedAgo", formatRelativeTime(lastUpdated));
+        }
         model.addAttribute("sourceYears", metadata.sourceYearsLoaded());
         model.addAttribute("sourceUrl", properties.downloadPageUrl());
         model.addAttribute("companyCount", metadata.companyCount());
         model.addAttribute("submissionCount", metadata.submissionCount());
+    }
+
+    private static String formatRelativeTime(Instant then) {
+        long minutes = Duration.between(then, Instant.now()).toMinutes();
+        if (minutes < 1) return "just now";
+        if (minutes < 60) return minutes + (minutes == 1 ? " minute ago" : " minutes ago");
+        long hours = minutes / 60;
+        if (hours < 24) return hours + (hours == 1 ? " hour ago" : " hours ago");
+        long days = hours / 24;
+        return days + (days == 1 ? " day ago" : " days ago");
     }
 
     private String buildSummary(String displayName, List<CompanyYearSummary> summaries) {
