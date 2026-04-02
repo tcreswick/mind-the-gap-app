@@ -9,8 +9,8 @@
   const years = p.years.map(String);
 
   const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  const MALE_COLOR   = "#2563eb";
-  const FEMALE_COLOR = "#e11d48";
+  const MALE_COLOR   = "#1e293b";
+  const FEMALE_COLOR = "#6366f1";
   const MEAN_COLOR   = "#4f46e5";
   const MEDIAN_COLOR = "#0ea5e9";
   const MUTED        = "#64748b";

@@ -319,6 +319,7 @@
                                         <div class="year-quartile-bar">
                                             <div class="year-quartile-fill-women" th:style="${'width: ' + s.femaleTopQuartile + '%'}"></div>
                                             <div class="year-quartile-center-mark"></div>
+                                            <div class="year-quartile-fill-men" th:style="${'width: ' + s.maleTopQuartile + '%'}"></div>
                                         </div>
                                         <span class="year-quartile-pct year-quartile-pct--men" th:text="${#numbers.formatDecimal(s.maleTopQuartile, 1, 1) + '%'}"></span>
                                     </div>
@@ -328,6 +329,7 @@
                                         <div class="year-quartile-bar">
                                             <div class="year-quartile-fill-women" th:style="${'width: ' + s.femaleUpperMiddleQuartile + '%'}"></div>
                                             <div class="year-quartile-center-mark"></div>
+                                            <div class="year-quartile-fill-men" th:style="${'width: ' + s.maleUpperMiddleQuartile + '%'}"></div>
                                         </div>
                                         <span class="year-quartile-pct year-quartile-pct--men" th:text="${#numbers.formatDecimal(s.maleUpperMiddleQuartile, 1, 1) + '%'}"></span>
                                     </div>
@@ -337,6 +339,7 @@
                                         <div class="year-quartile-bar">
                                             <div class="year-quartile-fill-women" th:style="${'width: ' + s.femaleLowerMiddleQuartile + '%'}"></div>
                                             <div class="year-quartile-center-mark"></div>
+                                            <div class="year-quartile-fill-men" th:style="${'width: ' + s.maleLowerMiddleQuartile + '%'}"></div>
                                         </div>
                                         <span class="year-quartile-pct year-quartile-pct--men" th:text="${#numbers.formatDecimal(s.maleLowerMiddleQuartile, 1, 1) + '%'}"></span>
                                     </div>
@@ -346,6 +349,7 @@
                                         <div class="year-quartile-bar">
                                             <div class="year-quartile-fill-women" th:style="${'width: ' + s.femaleLowerQuartile + '%'}"></div>
                                             <div class="year-quartile-center-mark"></div>
+                                            <div class="year-quartile-fill-men" th:style="${'width: ' + s.maleLowerQuartile + '%'}"></div>
                                         </div>
                                         <span class="year-quartile-pct year-quartile-pct--men" th:text="${#numbers.formatDecimal(s.maleLowerQuartile, 1, 1) + '%'}"></span>
                                     </div>

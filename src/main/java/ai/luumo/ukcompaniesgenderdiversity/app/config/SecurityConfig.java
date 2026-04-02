@@ -25,7 +25,7 @@ public class SecurityConfig {
                                         "script-src 'self' https://cdn.jsdelivr.net https://eu-assets.i.posthog.com; " +
                                         "style-src 'self' 'unsafe-inline'; " +
                                         "img-src 'self' data:; " +
-                                        "connect-src 'self' https://eu.i.posthog.com; " +
+                                        "connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com; " +
                                         "font-src 'self'; " +
                                         "frame-ancestors 'none'; " +
                                         "base-uri 'self'; " +

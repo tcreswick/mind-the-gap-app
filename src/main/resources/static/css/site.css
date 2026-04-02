@@ -570,9 +570,9 @@ main.main-content {
   transform: translateX(-50%);
   width: min(940px, calc(100% - 2rem));
   z-index: 1000;
-  background: #fff7ed;
-  border: 1px solid #fdba74;
-  border-left: 5px solid #f97316;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-left: 5px solid #94a3b8;
   border-radius: 0.75rem;
   box-shadow: var(--shadow-md);
   padding: 0.95rem 1rem;
@@ -584,7 +584,7 @@ main.main-content {
 
 .cookie-banner-text {
   margin: 0;
-  color: #7c2d12;
+  color: #334155;
   font-size: 0.93rem;
   font-weight: 500;
 }
@@ -606,22 +606,26 @@ main.main-content {
 }
 
 .cookie-btn--accept {
-  background: #ea580c;
+  background: #334155;
   color: #fff;
 }
 
 .cookie-btn--accept:hover {
-  background: #c2410c;
+  background: #1e293b;
 }
 
 .cookie-btn--reject {
   background: #fff;
-  border-color: #fdba74;
-  color: #7c2d12;
+  border-color: #cbd5e1;
+  color: #334155;
 }
 
 .cookie-btn--reject:hover {
-  background: #ffedd5;
+  background: #f1f5f9;
+}
+
+.cookie-banner--hidden {
+  display: none !important;
 }
 
 /* ── Year-by-year fold-outs ──────────────────────────── */
@@ -804,11 +808,11 @@ details.year-report[open] .year-report-chevron {
 }
 
 .year-quartile-pct-header--women {
-  color: #e11d48;
+  color: #6366f1;
 }
 
 .year-quartile-pct-header--men {
-  color: #2563eb;
+  color: #1e293b;
 }
 
 .year-quartile-rows {
@@ -834,18 +838,27 @@ details.year-report[open] .year-report-chevron {
   flex: 1;
   height: 14px;
   border-radius: 7px;
-  background: #2563eb;
-  overflow: visible;
+  background: #f1f5f9;
+  overflow: hidden;
   position: relative;
 }
 
 .year-quartile-fill-women {
   position: absolute;
-  left: 0;
+  right: 50%;
   top: 0;
   height: 100%;
-  background: #e11d48;
+  background: #6366f1;
   border-radius: 7px 0 0 7px;
+}
+
+.year-quartile-fill-men {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  background: #1e293b;
+  border-radius: 0 7px 7px 0;
 }
 
 .year-quartile-center-mark {
@@ -858,6 +871,7 @@ details.year-report[open] .year-report-chevron {
   transform: translateX(-50%);
   opacity: 0.35;
   border-radius: 1px;
+  z-index: 1;
 }
 
 .year-quartile-pct {
@@ -869,11 +883,11 @@ details.year-report[open] .year-report-chevron {
 }
 
 .year-quartile-pct--women {
-  color: #e11d48;
+  color: #6366f1;
 }
 
 .year-quartile-pct--men {
-  color: #2563eb;
+  color: #1e293b;
 }
 
 /* ── Utility ──────────────────────────────────────────── */
