@@ -9,8 +9,8 @@
   const years = p.years.map(String);
 
   const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  const MALE_COLOR   = "#1e293b";
-  const FEMALE_COLOR = "#6366f1";
+  const MALE_COLOR   = "#2563eb";
+  const FEMALE_COLOR = "#e11d48";
   const MEAN_COLOR   = "#4f46e5";
   const MEDIAN_COLOR = "#0ea5e9";
   const MUTED        = "#64748b";
@@ -68,17 +68,53 @@
     };
   }
 
-  // ── 1. Overall workforce split ─────────────────────────
+  // ── 1. Overall workforce split (deviation from 50:50) ──
   const elSplit = document.getElementById("chart-split");
   if (elSplit) {
-    new ApexCharts(elSplit, stackedBarOptions({
-      series: [
-        { name: "Men (%)",   data: p.male   },
-        { name: "Women (%)", data: p.female },
-      ],
-      height: 320,
-      showLegend: true,
-    })).render();
+    const deviation = p.female.map(v => v != null ? Math.round((v - 50) * 10) / 10 : null);
+    const hasData = deviation.some(v => v !== null);
+    if (hasData) {
+      new ApexCharts(elSplit, {
+        chart: { ...baseChart(280), type: "line" },
+        series: [{ name: "Gender balance", data: deviation }],
+        colors: ["#7c3aed"],
+        stroke: { width: [2.5], curve: "smooth" },
+        markers: { size: 4, strokeWidth: 0 },
+        dataLabels: { enabled: false },
+        xaxis: { categories: years, axisBorder: { show: false }, axisTicks: { show: false },
+                 labels: axisLabels() },
+        yaxis: {
+          labels: axisLabels(v => {
+            if (v > 0) return "+" + v + "%";
+            if (v < 0) return v + "%";
+            return "0%";
+          })
+        },
+        annotations: {
+          yaxis: [{ y: 0, borderColor: "#94a3b8", strokeDashArray: 4,
+                    label: { text: "Equal (50:50)", style: { background: "#f1f5f9",
+                             color: MUTED, fontSize: "11px", fontFamily: FONT } } }]
+        },
+        tooltip: {
+          theme: "light",
+          custom: function({ series, seriesIndex, dataPointIndex }) {
+            const femPct = p.female[dataPointIndex];
+            const malePct = p.male[dataPointIndex];
+            const dev = series[seriesIndex][dataPointIndex];
+            const sign = dev > 0 ? "+" : "";
+            return '<div style="padding:8px 12px;font-size:13px;line-height:1.6">' +
+              '<strong>' + years[dataPointIndex] + '</strong><br>' +
+              '<span style="color:' + MALE_COLOR + '">Men: ' + malePct.toFixed(1) + '%</span><br>' +
+              '<span style="color:' + FEMALE_COLOR + '">Women: ' + femPct.toFixed(1) + '%</span><br>' +
+              '<span style="color:#64748b">' + sign + dev.toFixed(1) + '% from parity</span></div>';
+          }
+        },
+        legend: baseLegend(false),
+        grid: baseGrid(),
+      }).render();
+    } else {
+      elSplit.innerHTML = '<p class="chart-no-data">No workforce composition data available.</p>';
+    }
   }
 
   // ── 2. Hourly pay gap line chart ───────────────────────
