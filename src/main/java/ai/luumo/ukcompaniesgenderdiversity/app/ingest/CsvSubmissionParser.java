@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +27,7 @@ import java.util.regex.Pattern;
 public class CsvSubmissionParser {
     private static final Logger log = LoggerFactory.getLogger(CsvSubmissionParser.class);
     private static final Pattern NON_ALNUM = Pattern.compile("[^a-zA-Z0-9]");
+    private static final DateTimeFormatter CSV_DATE_TIME = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public List<YearlySubmission> parse(Path csvPath, int year) {
         log.info("Parsing CSV submissions for year {} from {}.", year, csvPath);
@@ -63,7 +69,8 @@ public class CsvSubmissionParser {
                         parseDouble(pick(normalized, "femaleuppermiddlequartile")),
                         parseDouble(pick(normalized, "maletopquartile")),
                         parseDouble(pick(normalized, "femaletopquartile")),
-                        parseBoolean(pick(normalized, "submittedafterthedeadline"))
+                        parseBoolean(pick(normalized, "submittedafterthedeadline")),
+                        parseTimestamp(pick(normalized, "datesubmitted"))
                 ));
             }
             log.info("Parsed {} submission rows for year {}.", rows.size(), year);
@@ -106,6 +113,18 @@ public class CsvSubmissionParser {
 
     private boolean parseBoolean(String value) {
         return "true".equalsIgnoreCase(value == null ? "" : value.trim());
+    }
+
+    private Instant parseTimestamp(String value) {
+        if (isBlank(value)) {
+            return null;
+        }
+        try {
+            LocalDateTime parsed = LocalDateTime.parse(value.trim(), CSV_DATE_TIME);
+            return parsed.toInstant(ZoneOffset.UTC);
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
     }
 
     private boolean isBlank(String value) {

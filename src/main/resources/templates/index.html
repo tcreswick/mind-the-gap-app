@@ -90,6 +90,35 @@
                 </div>
             </section>
 
+            <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(recentUpdates)}">
+                <h2>Most recent updates</h2>
+                <p class="chart-description">Newest submissions on the government service, shown newest first.</p>
+                <div class="recent-updates-table-wrap">
+                    <table class="recent-updates-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Company</th>
+                                <th scope="col">Reporting year</th>
+                                <th scope="col">Submitted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="u : ${recentUpdates}">
+                                <td>
+                                    <a class="recent-updates-company"
+                                       th:href="@{/company/{employerId}(employerId=${u.employerId})}"
+                                       th:text="${u.displayName}"></a>
+                                </td>
+                                <td th:text="${u.reportingYear}"></td>
+                                <td>
+                                    <span class="recent-updates-ago" th:text="${u.submittedAgo}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- ── Company not found ─────────────────────────────── -->
             <section class="card warning" th:if="${missingCompanyId != null}">
                 <h2>Company not found</h2>
@@ -108,6 +137,9 @@
                 <p class="company-summary"
                    th:classappend="${hasLateSubmissions ? ' company-summary--late' : ''}"
                    th:text="${companySummary}"></p>
+                <p class="company-last-submission" th:if="${lastSubmissionReceivedFormatted != null}">
+                    Last submission received on <strong th:text="${lastSubmissionReceivedFormatted}"></strong>.
+                </p>
 
                 <!-- Meta grid -->
                 <div class="meta-grid">
@@ -249,6 +281,10 @@
 
                             <!-- Plain-English summary -->
                             <div class="year-text-summary">
+                                <p class="year-submitted-at"
+                                   th:if="${submittedAtByYear != null and submittedAtByYear.containsKey(s.reportingYear)}">
+                                    Submitted on <strong th:text="${submittedAtByYear.get(s.reportingYear)}"></strong>.
+                                </p>
                                 <p th:if="${s.diffMedianHourlyPercent != null and s.diffMedianHourlyPercent > 0}"
                                    th:with="pence=${T(java.lang.Math).round(100 - s.diffMedianHourlyPercent)}">
                                     In this organisation, women earned <strong th:text="${pence + 'p'}"></strong> for every &pound;1 that men earned when comparing median hourly pay.

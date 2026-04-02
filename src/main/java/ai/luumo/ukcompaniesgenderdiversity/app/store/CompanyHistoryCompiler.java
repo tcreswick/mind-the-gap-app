@@ -4,6 +4,7 @@ import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyHistory;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyStoreSnapshot;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyYearSummary;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.GenderSplitCalculator;
+import ai.luumo.ukcompaniesgenderdiversity.app.domain.RecentSubmissionItem;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreMetadata;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.YearlySubmission;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Component
 public class CompanyHistoryCompiler {
     private static final Logger log = LoggerFactory.getLogger(CompanyHistoryCompiler.class);
+    private static final int RECENT_SUBMISSIONS_LIMIT = 100;
 
     public CompanyStoreSnapshot compile(Map<Integer, List<YearlySubmission>> byYearSubmissions) {
         List<YearlySubmission> all = byYearSubmissions.values().stream()
@@ -40,13 +42,26 @@ public class CompanyHistoryCompiler {
                 companies.size(),
                 all.size()
         );
+
+        List<RecentSubmissionItem> recentSubmissions = all.stream()
+                .filter(s -> s.submittedAt() != null)
+                .sorted(Comparator.comparing(YearlySubmission::submittedAt).reversed())
+                .limit(RECENT_SUBMISSIONS_LIMIT)
+                .map(s -> new RecentSubmissionItem(
+                        s.employerId(),
+                        pickDisplayName(s),
+                        s.reportingYear(),
+                        s.submittedAt()
+                ))
+                .toList();
+
         log.info(
                 "Compiled company history snapshot: companies={}, submissions={}, years={}.",
                 metadata.companyCount(),
                 metadata.submissionCount(),
                 metadata.sourceYearsLoaded()
         );
-        return new CompanyStoreSnapshot(metadata, companies);
+        return new CompanyStoreSnapshot(metadata, companies, recentSubmissions);
     }
 
     private CompanyHistory toCompanyHistory(List<YearlySubmission> submissions) {
@@ -109,7 +124,8 @@ public class CompanyHistoryCompiler {
                 s.femaleUpperMiddleQuartile(),
                 s.maleTopQuartile(),
                 s.femaleTopQuartile(),
-                s.submittedAfterDeadline()
+                s.submittedAfterDeadline(),
+                s.submittedAt()
         );
     }
 

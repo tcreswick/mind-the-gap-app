@@ -1,5 +1,7 @@
 package ai.luumo.ukcompaniesgenderdiversity.app.domain;
 
+import java.time.Instant;
+
 public record YearlySubmission(
         int reportingYear,
         String employerId,
@@ -21,6 +23,7 @@ public record YearlySubmission(
         Double femaleUpperMiddleQuartile,
         Double maleTopQuartile,
         Double femaleTopQuartile,
-        boolean submittedAfterDeadline
+        boolean submittedAfterDeadline,
+        Instant submittedAt
 ) {
 }

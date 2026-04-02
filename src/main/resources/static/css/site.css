@@ -303,6 +303,63 @@ main.main-content {
   font-style: italic;
 }
 
+.recent-updates-table-wrap {
+  max-height: 29rem;
+  overflow-x: auto;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.recent-updates-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.recent-updates-table th,
+.recent-updates-table td {
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.recent-updates-table th {
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.recent-updates-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.recent-updates-table tbody tr:hover td {
+  background: #f8fafc;
+}
+
+.recent-updates-company {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.recent-updates-company:hover {
+  text-decoration: underline;
+}
+
+.recent-updates-ago {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 /* ── Company metadata grid ────────────────────────────── */
 
 .meta-grid {
@@ -436,6 +493,17 @@ main.main-content {
 
 .company-summary--late {
   color: #b45309;
+}
+
+.company-last-submission {
+  margin: -0.65rem 0 1.15rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.company-last-submission strong {
+  color: var(--text);
+  font-weight: 600;
 }
 
 /* ── Stats bar ────────────────────────────────────────── */
@@ -777,6 +845,14 @@ details.year-report[open] .year-report-chevron {
 
 .year-text-summary p:last-child {
   margin-bottom: 0;
+}
+
+.year-submitted-at {
+  font-size: 0.8rem !important;
+  color: var(--muted) !important;
+  margin-bottom: 0.6rem !important;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px dashed var(--border);
 }
 
 .year-text-summary strong {

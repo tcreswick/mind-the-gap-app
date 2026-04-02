@@ -3,10 +3,12 @@ package ai.luumo.ukcompaniesgenderdiversity.app.web;
 import ai.luumo.ukcompaniesgenderdiversity.app.config.AppProperties;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyHistory;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyYearSummary;
+import ai.luumo.ukcompaniesgenderdiversity.app.domain.RecentSubmissionItem;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreMetadata;
 import ai.luumo.ukcompaniesgenderdiversity.app.store.InMemoryCompanyStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +19,15 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -43,14 +49,16 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpServletResponse response) {
+        applyNoStoreHeaders(response);
         populateBaseModel(model);
         model.addAttribute("viewingCompany", false);
         return "index";
     }
 
     @GetMapping("/company/{employerId}")
-    public String company(@PathVariable String employerId, Model model) throws JsonProcessingException {
+    public String company(@PathVariable String employerId, Model model, HttpServletResponse response) throws JsonProcessingException {
+        applyNoStoreHeaders(response);
         populateBaseModel(model);
         Optional<CompanyHistory> company = store.getByEmployerId(employerId);
         model.addAttribute("viewingCompany", company.isPresent());
@@ -66,7 +74,18 @@ public class HomeController {
                     summaries.stream().anyMatch(CompanyYearSummary::submittedAfterDeadline));
             model.addAttribute("lateYears",
                     summaries.stream().filter(CompanyYearSummary::submittedAfterDeadline)
-                            .map(CompanyYearSummary::reportingYear).collect(java.util.stream.Collectors.toSet()));
+                            .map(CompanyYearSummary::reportingYear).collect(Collectors.toSet()));
+            model.addAttribute("submittedAtByYear", summaries.stream()
+                    .filter(s -> s.submittedAt() != null)
+                    .collect(Collectors.toMap(
+                            CompanyYearSummary::reportingYear,
+                            s -> formatSubmittedAt(s.submittedAt())
+                    )));
+            summaries.stream()
+                    .map(CompanyYearSummary::submittedAt)
+                    .filter(Objects::nonNull)
+                    .max(Comparator.naturalOrder())
+                    .ifPresent(submittedAt -> model.addAttribute("lastSubmissionReceivedFormatted", formatSubmittedAt(submittedAt)));
         } else {
             model.addAttribute("missingCompanyId", employerId);
         }
@@ -76,15 +95,25 @@ public class HomeController {
     private static final DateTimeFormatter UPDATED_FMT =
             DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy 'at' HH:mm 'UTC'", Locale.UK)
                     .withZone(ZoneOffset.UTC);
+    private static final DateTimeFormatter SUBMITTED_FMT =
+            DateTimeFormatter.ofPattern("EEEE, d MMM yyyy 'at' HH:mm 'UTC'", Locale.UK)
+                    .withZone(ZoneOffset.UTC);
 
     private void populateBaseModel(Model model) {
-        StoreMetadata metadata = store.snapshot().metadata();
+        var snapshot = store.snapshot();
+        StoreMetadata metadata = snapshot.metadata();
         Instant lastUpdated = metadata.lastUpdatedAt();
         model.addAttribute("lastUpdatedAt", lastUpdated);
         if (lastUpdated != null) {
             model.addAttribute("lastUpdatedFormatted", UPDATED_FMT.format(lastUpdated));
             model.addAttribute("lastUpdatedAgo", formatRelativeTime(lastUpdated));
         }
+        List<RecentSubmissionItem> recentSubmissions = snapshot.recentSubmissions() == null
+                ? Collections.emptyList()
+                : snapshot.recentSubmissions();
+        model.addAttribute("recentUpdates", recentSubmissions.stream()
+                .map(this::toHomeRecentUpdate)
+                .toList());
         model.addAttribute("sourceYears", metadata.sourceYearsLoaded());
         model.addAttribute("sourceUrl", properties.downloadPageUrl());
         model.addAttribute("companyCount", metadata.companyCount());
@@ -102,6 +131,21 @@ public class HomeController {
         if (hours < 24) return hours + (hours == 1 ? " hour ago" : " hours ago");
         long days = hours / 24;
         return days + (days == 1 ? " day ago" : " days ago");
+    }
+
+    private HomeRecentUpdate toHomeRecentUpdate(RecentSubmissionItem item) {
+        Instant submittedAt = item.submittedAt();
+        return new HomeRecentUpdate(
+                item.employerId(),
+                item.displayName(),
+                item.reportingYear(),
+                formatSubmittedAt(submittedAt),
+                formatRelativeTime(submittedAt)
+        );
+    }
+
+    private static String formatSubmittedAt(Instant submittedAt) {
+        return SUBMITTED_FMT.format(submittedAt);
     }
 
     private String buildSummary(String displayName, List<CompanyYearSummary> summaries) {
@@ -179,5 +223,20 @@ public class HomeController {
             return null;
         }
         return fullCommit.substring(0, Math.min(7, fullCommit.length()));
+    }
+
+    private void applyNoStoreHeaders(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, s-maxage=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+    }
+
+    private record HomeRecentUpdate(
+            String employerId,
+            String displayName,
+            int reportingYear,
+            String submittedAtFormatted,
+            String submittedAgo
+    ) {
     }
 }

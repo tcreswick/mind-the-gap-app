@@ -43,6 +43,17 @@ public class StartupDataInitializer implements ApplicationRunner {
         if (loadedSnapshot != null) {
             inMemoryCompanyStore.replace(loadedSnapshot);
             log.info("Data store loaded from on-disk snapshot.");
+            if (loadedSnapshot.recentSubmissions().isEmpty()) {
+                log.info("Loaded snapshot has no recent submissions; recompiling from local CSV files for compatibility.");
+                try {
+                    CompanyStoreSnapshot rebuilt = dataRefreshService.compileFromLocalFiles();
+                    inMemoryCompanyStore.replace(rebuilt);
+                    snapshotService.writeSnapshot(rebuilt);
+                    log.info("Snapshot migration complete: recent submissions are now available.");
+                } catch (RuntimeException ex) {
+                    log.warn("Snapshot migration failed; continuing with loaded snapshot.", ex);
+                }
+            }
         } else {
             log.info("No on-disk snapshot found. Data store starts empty until refresh compiles source data.");
         }
