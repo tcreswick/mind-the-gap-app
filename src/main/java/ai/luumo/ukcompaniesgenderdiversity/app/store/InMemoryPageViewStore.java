@@ -45,6 +45,15 @@ public class InMemoryPageViewStore {
         if (limit <= 0 || now == null) {
             return List.of();
         }
+        return viewedLast30Days(now).stream()
+                .limit(limit)
+                .toList();
+    }
+
+    public synchronized List<CompanyViewCount> viewedLast30Days(Instant now) {
+        if (now == null) {
+            return List.of();
+        }
         Instant cutoff = now.minus(WINDOW);
         List<CompanyViewCount> results = new ArrayList<>();
         List<String> emptyKeys = new ArrayList<>();
@@ -60,11 +69,9 @@ public class InMemoryPageViewStore {
         for (String key : emptyKeys) {
             viewsByEmployerId.remove(key);
         }
-
         return results.stream()
                 .sorted(Comparator.comparingLong(CompanyViewCount::viewCount).reversed()
                         .thenComparing(CompanyViewCount::employerId))
-                .limit(limit)
                 .toList();
     }
 

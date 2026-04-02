@@ -55,14 +55,14 @@
                 <div class="value" th:text="${#numbers.formatInteger(companiesWithViewsLast30Days, 1, 'COMMA')}">0</div>
             </div>
             <div>
-                <div class="label">Top list size</div>
-                <div class="value" th:text="${#lists.size(topViewedCompaniesLast30Days)}">0</div>
+                <div class="label">List size</div>
+                <div class="value" th:text="${#lists.size(viewedCompaniesLast30Days)}">0</div>
             </div>
         </div>
     </section>
 
     <section class="card">
-        <h2>Top companies by views</h2>
+        <h2>Companies by views (descending)</h2>
         <table>
             <thead>
             <tr>
@@ -72,10 +72,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${#lists.isEmpty(topViewedCompaniesLast30Days)}">
+            <tr th:if="${#lists.isEmpty(viewedCompaniesLast30Days)}">
                 <td colspan="3">No view data in the current 30-day window yet.</td>
             </tr>
-            <tr th:each="item : ${topViewedCompaniesLast30Days}">
+            <tr th:each="item : ${viewedCompaniesLast30Days}">
                 <td>
                     <a th:href="@{/company/{employerId}(employerId=${item.employerId})}" th:text="${item.displayName}"></a>
                 </td>

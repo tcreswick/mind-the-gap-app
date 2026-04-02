@@ -114,11 +114,11 @@ public class HomeController {
         applyNoStoreHeaders(response);
         applyIndexingHeaders(response, false);
         Instant now = Instant.now();
-        List<CompanyViewCount> topViews = pageViewStore.topViewedLast30Days(10, now);
+        List<CompanyViewCount> viewedCompanies = pageViewStore.viewedLast30Days(now);
         model.addAttribute("generatedAt", UPDATED_FMT.format(now));
         model.addAttribute("companiesWithViewsLast30Days", pageViewStore.companiesWithViewsLast30Days(now));
         model.addAttribute("totalViewsLast30Days", pageViewStore.totalViewsLast30Days(now));
-        model.addAttribute("topViewedCompaniesLast30Days", topViews.stream()
+        model.addAttribute("viewedCompaniesLast30Days", viewedCompanies.stream()
                 .map(this::toHiddenViewStatItem)
                 .toList());
         return "hidden-view-stats";

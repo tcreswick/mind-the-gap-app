@@ -36,6 +36,19 @@ class InMemoryPageViewStoreTest {
     }
 
     @Test
+    void viewedLast30DaysReturnsAllCompaniesWithViewsDescending() {
+        Instant now = Instant.parse("2026-04-02T12:00:00Z");
+        store.recordView("EMP-1", now.minusSeconds(60));
+        store.recordView("EMP-1", now.minusSeconds(30));
+        store.recordView("EMP-2", now.minusSeconds(20));
+        store.recordView("EMP-EXPIRED", now.minusSeconds(31L * 24 * 3600));
+
+        assertThat(store.viewedLast30Days(now))
+                .extracting(item -> item.employerId() + ":" + item.viewCount())
+                .containsExactly("EMP-1:2", "EMP-2:1");
+    }
+
+    @Test
     void replaceLoadsSnapshotAndPrunesExpiredEntries() {
         Instant now = Instant.parse("2026-04-02T12:00:00Z");
         CompanyPageViewSnapshot snapshot = new CompanyPageViewSnapshot(Map.of(
