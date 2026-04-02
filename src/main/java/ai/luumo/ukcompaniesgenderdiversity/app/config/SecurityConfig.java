@@ -22,10 +22,10 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives(
                                 "default-src 'self'; " +
-                                        "script-src 'self' https://cdn.jsdelivr.net; " +
+                                        "script-src 'self' https://cdn.jsdelivr.net https://eu-assets.i.posthog.com; " +
                                         "style-src 'self' 'unsafe-inline'; " +
                                         "img-src 'self' data:; " +
-                                        "connect-src 'self'; " +
+                                        "connect-src 'self' https://eu.i.posthog.com; " +
                                         "font-src 'self'; " +
                                         "frame-ancestors 'none'; " +
                                         "base-uri 'self'; " +
