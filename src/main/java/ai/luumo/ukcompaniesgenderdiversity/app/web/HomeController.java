@@ -64,6 +64,9 @@ public class HomeController {
             model.addAttribute("companySummary", buildSummary(history.displayName(), summaries));
             model.addAttribute("hasLateSubmissions",
                     summaries.stream().anyMatch(CompanyYearSummary::submittedAfterDeadline));
+            model.addAttribute("lateYears",
+                    summaries.stream().filter(CompanyYearSummary::submittedAfterDeadline)
+                            .map(CompanyYearSummary::reportingYear).collect(java.util.stream.Collectors.toSet()));
         } else {
             model.addAttribute("missingCompanyId", employerId);
         }

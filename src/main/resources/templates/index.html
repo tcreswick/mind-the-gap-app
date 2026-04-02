@@ -126,7 +126,10 @@
                     <div class="meta-item meta-item--full">
                         <span class="meta-label">Years Submitted</span>
                         <div class="year-badges">
-                            <span class="badge" th:each="year : ${company.submittedYears}" th:text="${year}"></span>
+                            <span th:each="year : ${company.submittedYears}"
+                                  th:text="${year}"
+                                  th:classappend="${lateYears != null and lateYears.contains(year)} ? ' badge--late' : ''"
+                                  class="badge"></span>
                         </div>
                     </div>
                     <div class="meta-item meta-item--full">

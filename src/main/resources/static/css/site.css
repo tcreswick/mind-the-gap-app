@@ -355,6 +355,12 @@ main.main-content {
   letter-spacing: 0.01em;
 }
 
+.badge--late {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
+
 /* ── Gov.uk external link ─────────────────────────────── */
 
 .govuk-link {
