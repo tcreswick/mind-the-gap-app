@@ -78,6 +78,10 @@ sudo systemctl reload nginx
 
 - Runtime env vars: `/etc/default/mind-the-gap-app`
 - Optional Spring config dir: `/etc/mind-the-gap-app/`
+- Runtime data directory defaults to `/var/lib/mind-the-gap-app/data` via systemd `APP_DATA_DIRECTORY`.
+
+If you override the data directory, make sure it is writable by the app user and included in
+the service `ReadWritePaths` allow-list.
 
 ## Notes
 

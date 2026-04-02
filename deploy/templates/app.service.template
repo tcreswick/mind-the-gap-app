@@ -8,6 +8,7 @@ User=__APP_USER__
 Group=__APP_GROUP__
 WorkingDirectory=/opt/__APP_NAME__/current
 EnvironmentFile=-/etc/default/__APP_NAME__
+Environment=APP_DATA_DIRECTORY=/var/lib/__APP_NAME__/data
 ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/__APP_NAME__/current/app.jar --spring.config.additional-location=file:/etc/__APP_NAME__/
 SuccessExitStatus=143
 Restart=on-failure
