@@ -7,6 +7,7 @@ import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreMetadata;
 import ai.luumo.ukcompaniesgenderdiversity.app.store.InMemoryCompanyStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +28,18 @@ public class HomeController {
     private final InMemoryCompanyStore store;
     private final ObjectMapper objectMapper;
     private final AppProperties properties;
+    private final String buildCommitShort;
 
-    public HomeController(InMemoryCompanyStore store, ObjectMapper objectMapper, AppProperties properties) {
+    public HomeController(InMemoryCompanyStore store,
+                          ObjectMapper objectMapper,
+                          AppProperties properties,
+                          Optional<GitProperties> gitProperties) {
         this.store = store;
         this.objectMapper = objectMapper;
         this.properties = properties;
+        this.buildCommitShort = gitProperties
+                .map(this::extractShortCommitId)
+                .orElse(null);
     }
 
     @GetMapping("/")
@@ -78,6 +86,9 @@ public class HomeController {
         model.addAttribute("sourceUrl", properties.downloadPageUrl());
         model.addAttribute("companyCount", metadata.companyCount());
         model.addAttribute("submissionCount", metadata.submissionCount());
+        if (buildCommitShort != null && !buildCommitShort.isBlank()) {
+            model.addAttribute("buildCommitShort", buildCommitShort);
+        }
     }
 
     private static String formatRelativeTime(Instant then) {
@@ -153,5 +164,17 @@ public class HomeController {
 
     private Double nullable(Double value) {
         return (value == null || value.isNaN()) ? null : value;
+    }
+
+    private String extractShortCommitId(GitProperties gitProperties) {
+        String shortCommit = gitProperties.getShortCommitId();
+        if (shortCommit != null && !shortCommit.isBlank()) {
+            return shortCommit;
+        }
+        String fullCommit = gitProperties.getCommitId();
+        if (fullCommit == null || fullCommit.isBlank()) {
+            return null;
+        }
+        return fullCommit.substring(0, Math.min(7, fullCommit.length()));
     }
 }
