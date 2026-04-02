@@ -20,6 +20,7 @@ class PageViewSnapshotServiceTest {
                 new ObjectMapper().findAndRegisterModules(),
                 new AppProperties(
                         "https://example.com",
+                        "https://example.com",
                         2018,
                         1000,
                         tempDir.toString(),

@@ -11,6 +11,7 @@ import java.nio.file.Path;
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(
         @NotBlank String downloadPageUrl,
+        @NotBlank String siteBaseUrl,
         @Min(2017) int sourceStartYear,
         @Min(1) long refreshIntervalMs,
         @NotBlank String dataDirectory,

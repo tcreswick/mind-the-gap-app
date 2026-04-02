@@ -19,3 +19,5 @@ Disallow: /api/
 User-agent: Google-Extended
 Allow: /
 Disallow: /api/
+
+Sitemap: /sitemap.xml

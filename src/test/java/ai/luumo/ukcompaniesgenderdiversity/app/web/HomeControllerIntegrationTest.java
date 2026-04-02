@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "app.startup-refresh-enabled=false",
         "app.download-page-url=https://example.com",
+        "app.site-base-url=https://example.test",
         "app.data-directory=target/test-data"
 })
 @AutoConfigureMockMvc
@@ -142,11 +143,23 @@ class HomeControllerIntegrationTest {
         mockMvc.perform(get("/robots.txt"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("User-agent: *")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Disallow: /api/")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Disallow: /api/")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Sitemap: /sitemap.xml")));
 
         mockMvc.perform(get("/llms.txt"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("# Mind the Gap")));
+    }
+
+    @Test
+    void sitemapIsPublicAndListsCompanyUrls() throws Exception {
+        mockMvc.perform(get("/sitemap.xml"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<urlset")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<loc>https://example.test/</loc>")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<loc>https://example.test/company/EMP-1</loc>")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<lastmod>2025-03-30T14:20:00Z</lastmod>")));
     }
 
     @Test

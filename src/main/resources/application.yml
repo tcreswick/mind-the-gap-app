@@ -18,6 +18,7 @@ management:
 
 app:
   download-page-url: https://gender-pay-gap.service.gov.uk/viewing/download-data/
+  site-base-url: ${APP_SITE_BASE_URL:https://mind-the-gap.uk/}
   source-start-year: 2017
   refresh-interval-ms: 3600000
   data-directory: data

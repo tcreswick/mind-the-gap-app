@@ -15,6 +15,7 @@ class LocalCsvRepositoryTest {
         LocalCsvRepository repository = new LocalCsvRepository(
                 new AppProperties(
                         "https://example.com",
+                        "https://example.com",
                         2018,
                         1000,
                         tempDir.toString(),

@@ -26,3 +26,21 @@ Then open:
 For server bootstrap, service setup, and ongoing deployment commands, see:
 
 - [`deploy/README.md`](deploy/README.md)
+
+## Google indexing
+
+- The app serves a runtime sitemap at `GET /sitemap.xml`.
+- Set `APP_SITE_BASE_URL` in production so sitemap URLs use the public canonical host.
+- `robots.txt` includes a sitemap directive for discovery.
+
+### Post-deploy validation checklist
+
+1. Open `https://<your-domain>/sitemap.xml` and confirm it includes:
+   - homepage URL
+   - company URLs under `/company/{employerId}`
+   - `<lastmod>` timestamps
+2. In [Google Search Console](https://search.google.com/search-console), submit `https://<your-domain>/sitemap.xml`.
+3. Monitor sitemap and indexing status for:
+   - fetch/parsing errors
+   - rejected URLs
+   - indexed count trends over time.
