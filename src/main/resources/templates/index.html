@@ -6,16 +6,10 @@
         <title th:text="${company != null ? company.displayName + ' - Mind the Gap' : 'Mind the Gap'}">Mind the Gap</title>
         <link rel="stylesheet" href="/css/site.css">
         <script defer src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script defer src="/js/cookie-consent.js"></script>
+        <script defer src="/js/posthog.js"></script>
         <script defer src="/js/company-search.js"></script>
         <script defer src="/js/company-chart.js"></script>
-        <script>
-            !function(t, e){var o, n, p, r; e.__SV || (window.posthog && window.posthog.__loaded) || (window.posthog = e, e._i = [], e.init = function(i, s, a){function g(t, e){var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function(){t.push([e].concat(Array.prototype.slice.call(arguments, 0)))}}(p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a?u = e[a] = []:a = "posthog", u.people = u.people || [], u.toString = function(t){var e = "posthog"; return"posthog" !== a && (e += "." + a), t || (e += " (stub)"), e}, u.people.toString = function(){return u.toString(1) + ".people (stub)"}, o = "fi init Oi Fi ft Ii Ai Ri capture calculateEventProperties Ni register register_once register_for_session unregister unregister_for_session Hi getFeatureFlag getFeatureFlagPayload getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync qi identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty zi Li createPersonProfile setInternalOrTestUser Bi $i Wi opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Mi debug bt ji getPageViewId captureTraceFeedback captureTraceMetric Si".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a])}, e.__SV = 1)}(document, window.posthog || []);
-            posthog.init('phc_A3WCMrUGWYMvCbQUX5tVWtgGFTr3jew4ZtGVBAj48gDa', {
-            api_host: 'https://eu.i.posthog.com',
-                    defaults: '2026-01-30',
-                    person_profiles: 'identified_only',
-            })
-        </script>
     </head>
     <body>
         <header class="hero" th:classappend="${viewingCompany ? ' hero--compact' : ''}">
@@ -23,7 +17,7 @@
                 <a href="/" class="hero-title-link">
                     <h1>Mind the Gap</h1>
                 </a>
-                <p class="lead">Search and compare historical UK employer gender pay gap submissions in one place.</p>
+                <p class="lead">See how any UK employer's gender pay gap has changed over time - all years, one view.</p>
 
                 <div class="hero-stats" th:if="${companyCount > 0}">
                     <div class="hero-stat">
@@ -64,21 +58,30 @@
 
             <!-- ── Home info card ───────────────────────────────── -->
             <section class="card" th:if="${company == null and missingCompanyId == null}">
-                <h2>&#x1F4CA; Why this site exists</h2>
+                <h2>&#x1F4CA; Why this exists</h2>
                 <div class="about-body">
                     <p>
-                        The official datasets are split by reporting year, which makes historical company analysis awkward.
-                        This viewer brings all available years together under one employer profile (linked by EmployerID),
-                        making trend analysis and at-a-glance gender split easier.
+                        Since 2017, UK employers with 250+ staff have been required to publish annual gender pay gap
+                        figures - covering hourly pay gaps, bonus gaps, and the proportion of men and women in each
+                        pay quartile.
                     </p>
                     <p>
-                        Source data comes from the
+                        The problem? The government's official service splits the data by reporting year. If you want
+                        to see whether a company is actually closing its gap or just treading water, you're left
+                        downloading spreadsheets and stitching them together yourself.
+                    </p>
+                    <p>
+                        Mind the Gap fixes that. Every submission is linked by employer, so you can search for any
+                        company and instantly see its full history - trends, quartile shifts, and all.
+                    </p>
+                    <p>
+                        The site is completely free to use. This data is public for a reason, and we think it should
+                        be easy for anyone - employees, jobseekers, journalists, researchers - to explore it without
+                        wrestling with spreadsheets.
+                    </p>
+                    <p>
+                        All data is sourced from the
                         <a href="https://gender-pay-gap.service.gov.uk/" rel="noopener noreferrer" target="_blank">UK Government Gender Pay Gap Service</a>.
-                    </p>
-                    <p>
-                        Gender pay gap reporting started in 2017 under regulations requiring larger employers
-                        (typically 250+ employees) to publish annual pay and bonus gap figures plus pay quartile splits.
-                        Deadlines are generally April (private/voluntary sector) and March (public sector).
                     </p>
                     <p th:if="${lastUpdatedAt != null}" class="update-stamp">
                         Data last changed on <strong th:text="${lastUpdatedFormatted}"></strong>
@@ -367,5 +370,13 @@
                 </p>
             </div>
         </footer>
+
+        <section id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
+            <p class="cookie-banner-text">🍪 We only use cookies to capture site usage statistics.</p>
+            <div class="cookie-banner-actions">
+                <button id="cookie-accept" class="cookie-btn cookie-btn--accept" type="button">Allow analytics cookies</button>
+                <button id="cookie-reject" class="cookie-btn cookie-btn--reject" type="button">No thanks</button>
+            </div>
+        </section>
     </body>
 </html>

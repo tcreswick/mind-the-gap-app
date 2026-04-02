@@ -561,6 +561,69 @@ main.main-content {
   color: #c4c4c8;
 }
 
+/* ── Cookie banner ────────────────────────────────────── */
+
+.cookie-banner {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(940px, calc(100% - 2rem));
+  z-index: 1000;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-left: 5px solid #f97316;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-md);
+  padding: 0.95rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem 1rem;
+}
+
+.cookie-banner-text {
+  margin: 0;
+  color: #7c2d12;
+  font-size: 0.93rem;
+  font-weight: 500;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cookie-btn {
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cookie-btn--accept {
+  background: #ea580c;
+  color: #fff;
+}
+
+.cookie-btn--accept:hover {
+  background: #c2410c;
+}
+
+.cookie-btn--reject {
+  background: #fff;
+  border-color: #fdba74;
+  color: #7c2d12;
+}
+
+.cookie-btn--reject:hover {
+  background: #ffedd5;
+}
+
 /* ── Year-by-year fold-outs ──────────────────────────── */
 
 .year-reports {
@@ -859,6 +922,16 @@ details.year-report[open] .year-report-chevron {
     min-width: 45%;
     border-bottom: 1px solid var(--border);
   }
+
+  .cookie-banner {
+    width: calc(100% - 1.25rem);
+    bottom: 0.6rem;
+    padding: 0.8rem 0.85rem;
+  }
+
+  .cookie-banner-text {
+    font-size: 0.88rem;
+  }
 }
 
 /* ── Responsive: mobile (≤480px) ─────────────────────── */
@@ -922,5 +995,23 @@ details.year-report[open] .year-report-chevron {
   .quartile-grid,
   .bonus-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cookie-banner {
+    left: 0.6rem;
+    right: 0.6rem;
+    transform: none;
+    width: auto;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cookie-banner-actions {
+    width: 100%;
+  }
+
+  .cookie-btn {
+    flex: 1;
+    min-width: 130px;
   }
 }
