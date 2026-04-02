@@ -1,6 +1,20 @@
+# Build output
 /target/
+/out/
+
+# Data/output artifacts
 /data/
 *.log
-/target/
+
+# Maven wrapper download cache
 /.mvn/apache-maven-*/
 /.mvn/apache-maven-*-bin.zip
+
+# IDE and local assistant config
+/.vscode/
+/.idea/
+/.claude/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
