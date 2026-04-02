@@ -1,0 +1,15 @@
+# Mind the Gap
+
+Mind the Gap helps users explore UK employer gender pay gap data across multiple years in one place.
+
+## Key pages
+- `/` Home and company search
+- `/company/{employerId}` Employer detail pages with trend history
+
+## Data source
+All figures are derived from the UK Government Gender Pay Gap Service:
+https://gender-pay-gap.service.gov.uk/
+
+## Crawling guidance
+- Public pages are intended to be indexed.
+- API endpoints under `/api/` should not be indexed.

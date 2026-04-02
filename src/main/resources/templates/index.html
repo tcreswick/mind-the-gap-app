@@ -4,11 +4,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title th:text="${company != null ? company.displayName + ' - Mind the Gap' : 'Mind the Gap'}">Mind the Gap</title>
+        <meta name="description" th:content="${metaDescription}" content="Track how UK employers' gender pay gap data changes over time in one searchable view.">
+        <meta name="robots" th:content="${robotsPolicy}" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+        <meta name="googlebot" th:content="${robotsPolicy}" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+        <link rel="canonical" th:href="${canonicalUrl}" href="/">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Mind the Gap">
+        <meta property="og:title" th:content="${company != null ? company.displayName + ' - Mind the Gap' : 'Mind the Gap'}" content="Mind the Gap">
+        <meta property="og:description" th:content="${metaDescription}" content="Track how UK employers' gender pay gap data changes over time in one searchable view.">
+        <meta property="og:url" th:content="${canonicalUrl}" content="/">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" th:content="${company != null ? company.displayName + ' - Mind the Gap' : 'Mind the Gap'}" content="Mind the Gap">
+        <meta name="twitter:description" th:content="${metaDescription}" content="Track how UK employers' gender pay gap data changes over time in one searchable view.">
         <link rel="stylesheet" href="/css/site.css">
         <script defer src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script defer src="/js/cookie-consent.js"></script>
         <script defer src="/js/posthog.js"></script>
         <script defer src="/js/company-search.js"></script>
+        <script defer src="/js/company-view-tracker.js"></script>
         <script defer src="/js/company-chart.js"></script>
     </head>
     <body>
@@ -90,6 +103,22 @@
                 </div>
             </section>
 
+            <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(topViewedCompaniesLast30Days)}">
+                <h2>Most viewed in the last 30 days</h2>
+                <p class="chart-description">Companies with the highest page views over the last 30 days.</p>
+                <ol class="recent-updates-list">
+                    <li class="recent-updates-item" th:each="v : ${topViewedCompaniesLast30Days}">
+                        <a class="recent-updates-company"
+                           th:href="@{/company/{employerId}(employerId=${v.employerId})}"
+                           th:text="${v.displayName}"></a>
+                        <span class="recent-updates-meta">
+                            <span th:text="${v.viewCountLast30Days}"></span>
+                            <span th:text="${v.viewCountLast30Days == 1 ? ' view' : ' views'}"></span>
+                        </span>
+                    </li>
+                </ol>
+            </section>
+
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(recentUpdates)}">
                 <h2>Most recent updates</h2>
                 <p class="chart-description">Newest submissions on the government service, shown newest first.</p>
@@ -137,6 +166,8 @@
                 <p class="company-summary"
                    th:classappend="${hasLateSubmissions ? ' company-summary--late' : ''}"
                    th:text="${companySummary}"></p>
+                <p class="chart-description"
+                   th:text="${'This company has been viewed ' + companyViewCountLast30Days + (companyViewCountLast30Days == 1 ? ' time' : ' times') + ' in the last 30 days.'}"></p>
                 <p class="company-last-submission" th:if="${lastSubmissionReceivedFormatted != null}">
                     Last submission received on <strong th:text="${lastSubmissionReceivedFormatted}"></strong>.
                 </p>
@@ -180,6 +211,10 @@
 
             <!-- ── Chart data payload (hidden) ──────────────────── -->
             <div id="chart-data" th:if="${company != null}" th:attr="data-payload=${chartPayload}" hidden></div>
+            <div id="company-view-tracker"
+                 th:if="${company != null}"
+                 th:attr="data-track-url=@{/api/track/company-view},data-employer-id=${company.employerId}"
+                 hidden></div>
 
             <!-- ── Workforce composition chart ──────────────────── -->
             <section class="card" th:if="${company != null}">
