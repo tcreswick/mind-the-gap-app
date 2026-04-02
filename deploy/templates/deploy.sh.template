@@ -31,6 +31,18 @@ else
 fi
 
 echo "==> Building application"
+if ! command -v javac >/dev/null 2>&1; then
+  echo "ERROR: javac not found. Install JDK 21 (e.g. sudo apt-get install -y openjdk-21-jdk)."
+  exit 1
+fi
+
+JAVA_VERSION_RAW="$(javac -version 2>&1 | awk '{print $2}')"
+JAVA_MAJOR="${JAVA_VERSION_RAW%%.*}"
+if [[ -z "${JAVA_MAJOR}" || "${JAVA_MAJOR}" -lt 21 ]]; then
+  echo "ERROR: JDK 21+ required. Found javac ${JAVA_VERSION_RAW}."
+  exit 1
+fi
+
 sudo -u "${APP_USER}" HOME="${STATE_DIR}" MAVEN_USER_HOME="${STATE_DIR}/.m2" \
   bash -lc "cd '${SRC_DIR}' && chmod +x mvnw && ./mvnw -Dmaven.repo.local='${MAVEN_REPO_DIR}' -DskipTests clean package"
 

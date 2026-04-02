@@ -5,7 +5,7 @@ It ingests annual CSV submissions, compiles company-level history, and serves a 
 
 ## Tech stack
 
-- Java 25
+- Java 21
 - Spring Boot (Web, Thymeleaf, Scheduling, Actuator)
 - Maven (`mvnw` wrapper included)
 

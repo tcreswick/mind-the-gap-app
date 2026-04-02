@@ -17,8 +17,8 @@
     <description>UK company gender pay gap historical viewer</description>
 
     <properties>
-        <java.version>25</java.version>
-        <maven.compiler.release>25</maven.compiler.release>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
 
     <dependencies>

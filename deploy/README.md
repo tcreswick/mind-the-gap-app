@@ -21,7 +21,7 @@ This directory contains a minimal server-side deployment flow for Debian:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y git curl
+sudo apt-get install -y git curl openjdk-21-jdk
 ```
 
 2) Run bootstrap:
@@ -81,6 +81,6 @@ sudo systemctl reload nginx
 
 ## Notes
 
-- This project currently targets Java 25 (`pom.xml`), so your Debian server must have a Java 25 JDK available for build/runtime.
+- This project targets Java 21 (`pom.xml`), so your Debian server must have a Java 21 JDK available for build/runtime.
 - If your Git host uses SSH, ensure the server user can access the repo key (or use an HTTPS URL with token auth).
 - Maven local repo is stored under `/var/lib/<app>/.m2/repository` to avoid `/nonexistent/.m2` errors when using a no-login system user.
