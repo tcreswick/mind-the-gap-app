@@ -13,7 +13,16 @@ class LocalCsvRepositoryTest {
     @Test
     void saveIfChangedDetectsChangedContent(@TempDir Path tempDir) {
         LocalCsvRepository repository = new LocalCsvRepository(
-                new AppProperties("https://example.com", 2018, 1000, tempDir.toString(), "store.json.gz", false)
+                new AppProperties(
+                        "https://example.com",
+                        2018,
+                        1000,
+                        tempDir.toString(),
+                        "store.json.gz",
+                        "company-page-views.json.gz",
+                        300000,
+                        false
+                )
         );
 
         boolean first = repository.saveIfChanged(2024, "a,b\n1,2".getBytes());

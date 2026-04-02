@@ -19,7 +19,9 @@ management:
 app:
   download-page-url: https://gender-pay-gap.service.gov.uk/viewing/download-data/
   source-start-year: 2017
-  refresh-interval-ms: 10800000
+  refresh-interval-ms: 3600000
   data-directory: data
   snapshot-file-name: store.json.gz
+  page-views-file-name: company-page-views.json.gz
+  page-views-persist-interval-ms: 300000
   startup-refresh-enabled: true

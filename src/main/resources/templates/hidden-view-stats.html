@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Internal View Stats</title>
+    <style>
+        :root { color-scheme: dark; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: system-ui, sans-serif;
+            background: #0b1220;
+            color: #d7e3ff;
+        }
+        .wrap { max-width: 860px; margin: 0 auto; }
+        .card {
+            background: #111a2f;
+            border: 1px solid #2b3a62;
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        .label { color: #9fb2df; font-size: 13px; }
+        .value { font-size: 26px; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            text-align: left;
+            padding: 9px 6px;
+            border-bottom: 1px solid #243356;
+        }
+        th { color: #9fb2df; font-weight: 600; }
+        a { color: #7fb6ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<main class="wrap">
+    <section class="card">
+        <h1>Internal view stats (last 30 days)</h1>
+        <p th:text="${'Generated at ' + generatedAt}"></p>
+        <div class="grid">
+            <div>
+                <div class="label">Total views</div>
+                <div class="value" th:text="${#numbers.formatInteger(totalViewsLast30Days, 1, 'COMMA')}">0</div>
+            </div>
+            <div>
+                <div class="label">Companies viewed</div>
+                <div class="value" th:text="${#numbers.formatInteger(companiesWithViewsLast30Days, 1, 'COMMA')}">0</div>
+            </div>
+            <div>
+                <div class="label">Top list size</div>
+                <div class="value" th:text="${#lists.size(topViewedCompaniesLast30Days)}">0</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Top companies by views</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Company</th>
+                <th>Employer ID</th>
+                <th>Views</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(topViewedCompaniesLast30Days)}">
+                <td colspan="3">No view data in the current 30-day window yet.</td>
+            </tr>
+            <tr th:each="item : ${topViewedCompaniesLast30Days}">
+                <td>
+                    <a th:href="@{/company/{employerId}(employerId=${item.employerId})}" th:text="${item.displayName}"></a>
+                </td>
+                <td th:text="${item.employerId}"></td>
+                <td th:text="${#numbers.formatInteger(item.viewCountLast30Days, 1, 'COMMA')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

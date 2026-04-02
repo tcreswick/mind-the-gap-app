@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import ai.luumo.ukcompaniesgenderdiversity.app.web.HomeController;
 
 @Configuration
 public class SecurityConfig {
@@ -15,6 +16,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/", "/company/**", "/api/companies").permitAll()
+                        .requestMatchers(HttpMethod.GET, HomeController.HIDDEN_VIEW_STATS_PATH).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/track/company-view").permitAll()
                         .requestMatchers(HttpMethod.GET, "/css/**", "/js/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                         .anyRequest().denyAll()

@@ -15,6 +15,8 @@ public record AppProperties(
         @Min(1) long refreshIntervalMs,
         @NotBlank String dataDirectory,
         @NotBlank String snapshotFileName,
+        @NotBlank String pageViewsFileName,
+        @Min(1000) long pageViewsPersistIntervalMs,
         boolean startupRefreshEnabled
 ) {
     public Path dataDirectoryPath() {

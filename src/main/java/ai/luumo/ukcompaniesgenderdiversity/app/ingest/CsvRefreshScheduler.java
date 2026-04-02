@@ -12,7 +12,7 @@ public class CsvRefreshScheduler {
     }
 
     @Scheduled(fixedDelayString = "${app.refresh-interval-ms}")
-    public void refreshEveryThreeHours() {
+    public void refreshEveryHour() {
         dataRefreshService.refreshFromSource();
     }
 }
