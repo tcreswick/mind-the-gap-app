@@ -82,13 +82,13 @@
         markers: { size: 4, strokeWidth: 0 },
         dataLabels: { enabled: false },
         xaxis: { categories: years, axisBorder: { show: false }, axisTicks: { show: false },
-                 labels: axisLabels() },
+                 labels: { show: false } },
         yaxis: {
-          labels: axisLabels(v => {
+          labels: { ...axisLabels(v => {
             if (v > 0) return "+" + v + "%";
             if (v < 0) return v + "%";
             return "0%";
-          })
+          }), minWidth: 50, maxWidth: 50 }
         },
         annotations: {
           yaxis: [{ y: 0, borderColor: "#94a3b8", strokeDashArray: 4,
@@ -122,14 +122,26 @@
   if (elSplitBars) {
     const hasData = p.male.some(v => v !== null);
     if (hasData) {
-      new ApexCharts(elSplitBars, stackedBarOptions({
+      new ApexCharts(elSplitBars, {
+        chart: { ...baseChart(220), type: "bar", stacked: true },
         series: [
           { name: "Men (%)",   data: p.male   },
           { name: "Women (%)", data: p.female },
         ],
-        height: 220,
-        showLegend: true,
-      })).render();
+        colors: [MALE_COLOR, FEMALE_COLOR],
+        plotOptions: {
+          bar: { columnWidth: "58%", borderRadius: 3,
+                 borderRadiusApplication: "end", borderRadiusWhenStacked: "last" }
+        },
+        dataLabels: { enabled: false },
+        xaxis: { categories: years, axisBorder: { show: false }, axisTicks: { show: false },
+                 labels: axisLabels() },
+        yaxis: { min: 0, max: 100, tickAmount: 4,
+                 labels: { ...axisLabels(v => v + "%"), minWidth: 50, maxWidth: 50 } },
+        tooltip: { theme: "light", y: { formatter: v => v.toFixed(1) + "%" } },
+        legend: baseLegend(true),
+        grid: baseGrid(),
+      }).render();
     }
   }
 
