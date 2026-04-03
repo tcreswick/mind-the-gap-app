@@ -103,31 +103,6 @@
                 </div>
             </section>
 
-            <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(topViewedCompaniesLast30Days)}">
-                <h2>Most viewed in the last 30 days</h2>
-                <p class="chart-description">Companies with the highest page views over the last 30 days.</p>
-                <div class="recent-updates-table-wrap most-viewed-table-wrap">
-                    <table class="recent-updates-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Company</th>
-                                <th scope="col">Views (30 days)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="v : ${topViewedCompaniesLast30Days}">
-                                <td>
-                                    <a class="recent-updates-company"
-                                       th:href="@{/company/{employerId}(employerId=${v.employerId})}"
-                                       th:text="${v.displayName}"></a>
-                                </td>
-                                <td th:text="${#numbers.formatInteger(v.viewCountLast30Days, 1, 'COMMA')}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(recentUpdates)}">
                 <h2>Most recent updates</h2>
                 <p class="chart-description">Newest submissions on the government service, shown newest first.</p>
@@ -156,6 +131,32 @@
                     </table>
                 </div>
             </section>
+            
+            <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(topViewedCompaniesLast30Days)}">
+                <h2>Most viewed in the last 30 days</h2>
+                <p class="chart-description">Companies with the highest page views over the last 30 days.</p>
+                <div class="recent-updates-table-wrap most-viewed-table-wrap">
+                    <table class="recent-updates-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Company</th>
+                                <th scope="col">Views (30 days)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="v : ${topViewedCompaniesLast30Days}">
+                                <td>
+                                    <a class="recent-updates-company"
+                                       th:href="@{/company/{employerId}(employerId=${v.employerId})}"
+                                       th:text="${v.displayName}"></a>
+                                </td>
+                                <td th:text="${#numbers.formatInteger(v.viewCountLast30Days, 1, 'COMMA')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
 
             <!-- ── Company not found ─────────────────────────────── -->
             <section class="card warning" th:if="${missingCompanyId != null}">
