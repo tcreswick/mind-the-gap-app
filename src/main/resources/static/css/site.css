@@ -363,6 +363,7 @@ main.main-content {
 .recent-updates-ago {
   font-size: 0.82rem;
   color: var(--muted);
+  white-space: nowrap;
 }
 
 /* ── Company metadata grid ────────────────────────────── */
