@@ -6,6 +6,7 @@ import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyStoreSnapshot;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyYearSummary;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreMetadata;
 import ai.luumo.ukcompaniesgenderdiversity.app.store.InMemoryCompanyStore;
+import ai.luumo.ukcompaniesgenderdiversity.app.store.StoreStatisticsCompiler;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SitemapServiceTest {
     @Test
     void buildSitemapXmlUsesCompanySubmissionLastmodWithStoreFallback() {
-        InMemoryCompanyStore store = new InMemoryCompanyStore();
+        InMemoryCompanyStore store = new InMemoryCompanyStore(new StoreStatisticsCompiler());
         Instant storeLastUpdatedAt = Instant.parse("2026-04-02T10:00:00Z");
 
         CompanyHistory withSubmissionTimestamp = new CompanyHistory(

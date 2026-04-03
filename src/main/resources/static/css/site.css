@@ -488,6 +488,10 @@ main.main-content {
   text-align: center;
 }
 
+#home-submissions-chart {
+  min-height: 280px;
+}
+
 /* ── Company header card ──────────────────────────────── */
 
 .company-summary {

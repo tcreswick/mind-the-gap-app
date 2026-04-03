@@ -4,8 +4,10 @@ import ai.luumo.ukcompaniesgenderdiversity.app.config.AppProperties;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyHistory;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyYearSummary;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyViewCount;
+import ai.luumo.ukcompaniesgenderdiversity.app.domain.DailySubmissionCount;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.RecentSubmissionItem;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreMetadata;
+import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreStatisticsSnapshot;
 import ai.luumo.ukcompaniesgenderdiversity.app.store.InMemoryCompanyStore;
 import ai.luumo.ukcompaniesgenderdiversity.app.store.InMemoryPageViewStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -130,6 +132,8 @@ public class HomeController {
     private static final DateTimeFormatter SUBMITTED_FMT =
             DateTimeFormatter.ofPattern("EEEE, d MMM yyyy 'at' HH:mm 'UTC'", Locale.UK)
                     .withZone(ZoneOffset.UTC);
+    private static final DateTimeFormatter DAY_LABEL_FMT =
+            DateTimeFormatter.ofPattern("d MMM", Locale.UK);
 
     private void populateBaseModel(Model model) {
         var snapshot = store.snapshot();
@@ -146,6 +150,7 @@ public class HomeController {
         model.addAttribute("recentUpdates", recentSubmissions.stream()
                 .map(this::toHomeRecentUpdate)
                 .toList());
+        model.addAttribute("submissionsTrendPayload", buildSubmissionsTrendPayload(store.statisticsSnapshot()));
         model.addAttribute("topViewedCompaniesLast30Days", pageViewStore.topViewedLast30Days(10, Instant.now()).stream()
                 .map(this::toTopViewedCompany)
                 .flatMap(Optional::stream)
@@ -218,6 +223,22 @@ public class HomeController {
         }
         return displayName + " has submitted data every year since " + firstYear
                 + ". " + lateCount + " of " + totalCount + " submissions were filed after the deadline.";
+    }
+
+    private String buildSubmissionsTrendPayload(StoreStatisticsSnapshot stats) {
+        List<DailySubmissionCount> series = stats.submissionsPerDayLast30Days();
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("labels", series.stream()
+                .map(item -> DAY_LABEL_FMT.format(item.day()))
+                .toList());
+        payload.put("counts", series.stream()
+                .map(DailySubmissionCount::submissionCount)
+                .toList());
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException ex) {
+            throw new IllegalStateException("Failed to build submissions trend payload.", ex);
+        }
     }
 
     private String buildChartPayload(List<CompanyYearSummary> summaries) throws JsonProcessingException {

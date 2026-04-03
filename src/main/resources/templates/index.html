@@ -22,6 +22,7 @@
         <script defer src="/js/posthog.js"></script>
         <script defer src="/js/company-search.js"></script>
         <script defer src="/js/company-view-tracker.js"></script>
+        <script defer src="/js/home-submissions-chart.js"></script>
         <script defer src="/js/company-chart.js"></script>
     </head>
     <body>
@@ -101,6 +102,17 @@
                         <span class="update-ago" th:text="'(about ' + ${lastUpdatedAgo} + ')'"></span>
                     </p>
                 </div>
+            </section>
+
+            <div id="home-submissions-trend-data"
+                 th:if="${company == null and missingCompanyId == null}"
+                 th:attr="data-payload=${submissionsTrendPayload}"
+                 hidden></div>
+
+            <section class="card" th:if="${company == null and missingCompanyId == null}">
+                <h2>Submissions over the last 30 days</h2>
+                <p class="chart-description">Total number of data submissions (one per organisation) each day.</p>
+                <div id="home-submissions-chart" role="img" aria-label="Daily submission counts for the last 30 days"></div>
             </section>
 
             <section class="card" th:if="${company == null and missingCompanyId == null and !#lists.isEmpty(recentUpdates)}">

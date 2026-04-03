@@ -78,6 +78,7 @@ class HomeControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Cache-Control", org.hamcrest.Matchers.containsString("no-store")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Mind the Gap")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Submissions over the last 30 days")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Most recent updates")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("/company/EMP-1")));
     }
@@ -101,6 +102,19 @@ class HomeControllerIntegrationTest {
 
         String html = result.getResponse().getContentAsString();
         assertThat(html.indexOf("Most viewed in the last 30 days"))
+                .isLessThan(html.indexOf("Most recent updates"));
+    }
+
+    @Test
+    void homePageShowsSubmissionTrendAboveRecentUpdates() throws Exception {
+        MvcResult result = mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"home-submissions-trend-data\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"home-submissions-chart\"")))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString();
+        assertThat(html.indexOf("Submissions over the last 30 days"))
                 .isLessThan(html.indexOf("Most recent updates"));
     }
 

@@ -2,11 +2,13 @@ package ai.luumo.ukcompaniesgenderdiversity.app.store;
 
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyHistory;
 import ai.luumo.ukcompaniesgenderdiversity.app.domain.CompanyStoreSnapshot;
+import ai.luumo.ukcompaniesgenderdiversity.app.domain.StoreStatisticsSnapshot;
 import ai.luumo.ukcompaniesgenderdiversity.app.web.SearchSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,8 +21,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class InMemoryCompanyStore {
     private static final Logger log = LoggerFactory.getLogger(InMemoryCompanyStore.class);
 
+    private final StoreStatisticsCompiler storeStatisticsCompiler;
     private final AtomicReference<CompanyStoreSnapshot> snapshotRef = new AtomicReference<>(CompanyStoreSnapshot.empty());
+    private final AtomicReference<StoreStatisticsSnapshot> statisticsRef = new AtomicReference<>(StoreStatisticsSnapshot.empty());
     private final Map<String, CompanyHistory> byEmployerId = new ConcurrentHashMap<>();
+
+    public InMemoryCompanyStore(StoreStatisticsCompiler storeStatisticsCompiler) {
+        this.storeStatisticsCompiler = storeStatisticsCompiler;
+    }
 
     public synchronized void replace(CompanyStoreSnapshot snapshot) {
         byEmployerId.clear();
@@ -28,6 +36,7 @@ public class InMemoryCompanyStore {
             byEmployerId.put(company.employerId(), company);
         }
         snapshotRef.set(snapshot);
+        statisticsRef.set(storeStatisticsCompiler.compile(byEmployerId.values(), Instant.now()));
         log.info("In-memory store replaced: {}", describeState());
     }
 
@@ -37,6 +46,10 @@ public class InMemoryCompanyStore {
 
     public boolean isEmpty() {
         return byEmployerId.isEmpty();
+    }
+
+    public StoreStatisticsSnapshot statisticsSnapshot() {
+        return statisticsRef.get();
     }
 
     public String describeState() {
