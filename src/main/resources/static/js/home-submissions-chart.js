@@ -20,6 +20,8 @@
       type: "bar",
       height: 200,
       toolbar: { show: false },
+      zoom: { enabled: false, allowMouseWheelZoom: false },
+      selection: { enabled: false },
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       animations: { enabled: true, easing: "easeinout", speed: 500 },
     },

@@ -26,6 +26,8 @@
     return {
       height,
       toolbar: { show: false },
+      zoom: { enabled: false, allowMouseWheelZoom: false },
+      selection: { enabled: false },
       fontFamily: FONT,
       animations: { enabled: true, easing: "easeinout", speed: 500 },
     };
